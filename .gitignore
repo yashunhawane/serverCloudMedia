@@ -32,7 +32,7 @@ out/
 
 # Coverage directory used by tools like istanbul
 coverage/
-
+data.txt
 # nyc test coverage
 .nyc_output
 
