@@ -1,7 +1,12 @@
 import express from "express";
 import authMiddleware from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
-import { uploadMediaController,getMediaController } from "../controllers/mediaController.js";
+import {
+  uploadMediaController,
+  getMediaController,
+  getFavoriteMediaController,
+  updateMediaFavoriteController,
+} from "../controllers/mediaController.js";
 
 const router = express.Router();
 
@@ -26,6 +31,23 @@ router.post(
  *   &page=1
  *   &limit=20
  */
-router.get("/", authMiddleware, getMediaController);
+router.get("/getimages", authMiddleware, getMediaController);
+
+/**
+ * GET /api/media/favorites
+ * Headers: Authorization: Bearer <token>
+ * Query params (optional):
+ *   ?media_type=image|video
+ *   &page=1
+ *   &limit=20
+ */
+router.get("/favorites", authMiddleware, getFavoriteMediaController);
+
+/**
+ * PUT /api/media/:mediaId/favorite
+ * Headers: Authorization: Bearer <token>
+ * Body: { "is_favorite": true|false }
+ */
+router.put("/:mediaId/favorite", authMiddleware, updateMediaFavoriteController);
 
 export default router;

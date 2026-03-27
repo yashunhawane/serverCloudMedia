@@ -1,4 +1,5 @@
-import { uploadMedia , getUserMedia } from "../services/mediaService.js";
+import mongoose from "mongoose";
+import { uploadMedia, getUserMedia, updateMediaFavorite } from "../services/mediaService.js";
 
 export const uploadMediaController = async (req, res) => {
   try {
@@ -49,4 +50,65 @@ export const getMediaController = async (req, res) => {
     return res.status(500).json({ message: error.message || "Fetch failed" });
   }
 };
- 
+
+export const getFavoriteMediaController = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { media_type, page, limit } = req.query;
+
+    const options = {
+      is_favorite: true,
+      ...(media_type && { media_type }),
+      ...(page && { page }),
+      ...(limit && { limit }),
+    };
+
+    const result = await getUserMedia(userId, options);
+
+    return res.status(200).json({
+      message: "Favorite media fetched successfully",
+      ...result,
+    });
+  } catch (error) {
+    console.error("Favorite fetch error:", error);
+    return res.status(500).json({
+      message: error.message || "Favorite fetch failed",
+    });
+  }
+};
+
+export const updateMediaFavoriteController = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { mediaId } = req.params;
+    const { is_favorite } = req.body;
+    
+
+    if (!mongoose.isValidObjectId(mediaId)) {
+      return res.status(400).json({ message: "Invalid media id" });
+    }
+
+    if (typeof is_favorite !== "boolean") {
+      return res.status(400).json({
+        message: "is_favorite must be a boolean",
+      });
+    }
+
+    const media = await updateMediaFavorite(userId, mediaId, is_favorite);
+
+    return res.status(200).json({
+      message: "Favorite status updated successfully",
+      data: media,
+    });
+  } catch (error) {
+    console.error("Favorite update error:", error);
+
+    if (error.message === "Media not found") {
+      return res.status(404).json({ message: error.message });
+    }
+
+    return res.status(500).json({
+      message: error.message || "Favorite update failed",
+    });
+  }
+};

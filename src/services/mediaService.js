@@ -53,8 +53,7 @@ export const uploadMedia = async ({ file, userId, userName }) => {
 
 /**
  * Get all media for a specific user with optional filters.
- * @param {string} userId
- * @param {object} options - { media_type, is_favorite, page, limit }
+
  */
 export const getUserMedia = async (userId, options = {}) => {
   const { media_type, is_favorite, page = 1, limit = 20 } = options;
@@ -82,4 +81,18 @@ export const getUserMedia = async (userId, options = {}) => {
     totalPages: Math.ceil(total / limit),
     items,
   };
+};
+
+export const updateMediaFavorite = async (userId, mediaId, isFavorite) => {
+  const media = await Media.findOneAndUpdate(
+    { _id: mediaId, user_id: userId },
+    { is_favorite: isFavorite },
+    { new: true, runValidators: true }
+  );
+
+  if (!media) {
+    throw new Error("Media not found");
+  }
+
+  return media;
 };
