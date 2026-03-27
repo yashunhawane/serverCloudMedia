@@ -11,7 +11,7 @@ const mediaSchema = new mongoose.Schema(
 
     userName: {
       type: String,
-      required: true, // snapshot of username (denormalized)
+      required: true, 
     },
 
     media_type: {

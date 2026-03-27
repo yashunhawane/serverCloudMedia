@@ -22,8 +22,8 @@ export const signupService = async ({ email, userName, password }) => {
   return user;
 };
 
-export const loginService = async ({ userName, password }) => {
-  const user = await User.findOne({ userName });
+export const loginService = async ({ email, password }) => {
+  const user = await User.findOne({ email });
   if (!user) {
     throw new Error("Invalid credentials");
   }
